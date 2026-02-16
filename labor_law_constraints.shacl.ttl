@@ -1,0 +1,69 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <https://example.org/labor-law-ontology#> .
+
+:HoldingShape a sh:NodeShape ;
+  sh:targetClass :Holding ;
+  sh:property [
+    sh:path :supportedBy ;
+    sh:minCount 1 ;
+    sh:class :EvidenceSpan ;
+    sh:message "Each Holding must have at least one EvidenceSpan via :supportedBy."@en
+  ] ;
+  sh:property [
+    sh:path :decidesIssue ;
+    sh:minCount 1 ;
+    sh:class :Issue ;
+    sh:message "Each Holding must decide at least one Issue."@en
+  ] .
+
+:IssueShape a sh:NodeShape ;
+  sh:targetClass :Issue ;
+  sh:property [
+    sh:path :requiresElement ;
+    sh:minCount 1 ;
+    sh:class :LegalElement ;
+    sh:message "Each Issue must require at least one LegalElement."@en
+  ] .
+
+:EvidenceSpanShape a sh:NodeShape ;
+  sh:targetClass :EvidenceSpan ;
+  sh:property [
+    sh:path :refersToSource ;
+    sh:minCount 1 ;
+    sh:class :LaborLegalSource ;
+    sh:message "Each EvidenceSpan must refer to at least one LaborLegalSource."@en
+  ] ;
+  sh:property [
+    sh:path :paragraphIndex ;
+    sh:datatype xsd:integer ;
+    sh:minCount 1 ;
+    sh:message "EvidenceSpan requires integer paragraphIndex."@en
+  ] ;
+  sh:property [
+    sh:path :textSpan ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "EvidenceSpan requires textSpan."@en
+  ] .
+
+:LaborCaseShape a sh:NodeShape ;
+  sh:targetClass :LaborCase ;
+  sh:property [
+    sh:path :caseNumber ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:message "LaborCase requires caseNumber."@en
+  ] ;
+  sh:property [
+    sh:path :decisionDate ;
+    sh:datatype xsd:date ;
+    sh:minCount 1 ;
+    sh:message "LaborCase requires decisionDate."@en
+  ] ;
+  sh:property [
+    sh:path :raisesIssue ;
+    sh:minCount 1 ;
+    sh:class :Issue ;
+    sh:message "LaborCase must raise at least one Issue."@en
+  ] .
