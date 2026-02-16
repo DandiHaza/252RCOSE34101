@@ -1,0 +1,160 @@
+@prefix : <https://example.org/labor-law-ontology#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:LaborLawOntology a owl:Ontology ;
+  rdfs:label "Labor Law Ontology v0.1"@en ;
+  rdfs:comment "Evidence-first ontology for representing labor-law issues, elements, facts, holdings, and remedies."@en .
+
+### Classes
+:LaborLegalSource a owl:Class ; rdfs:label "Labor Legal Source"@en .
+:LaborCase a owl:Class ; rdfs:label "Labor Case"@en .
+:Party a owl:Class ; rdfs:label "Party"@en .
+:Issue a owl:Class ; rdfs:label "Issue"@en .
+:LegalElement a owl:Class ; rdfs:label "Legal Element"@en .
+:Fact a owl:Class ; rdfs:label "Fact"@en .
+:Holding a owl:Class ; rdfs:label "Holding"@en .
+:Remedy a owl:Class ; rdfs:label "Remedy"@en .
+:EvidenceSpan a owl:Class ; rdfs:label "Evidence Span"@en .
+:TimeContext a owl:Class ; rdfs:label "Time Context"@en .
+
+### Object Properties
+:raisesIssue a owl:ObjectProperty ;
+  rdfs:domain :LaborCase ; rdfs:range :Issue ;
+  rdfs:label "raises issue"@en .
+
+:involvesParty a owl:ObjectProperty ;
+  rdfs:domain :LaborCase ; rdfs:range :Party ;
+  rdfs:label "involves party"@en .
+
+:requiresElement a owl:ObjectProperty ;
+  rdfs:domain :Issue ; rdfs:range :LegalElement ;
+  rdfs:label "requires element"@en .
+
+:appliesToFact a owl:ObjectProperty ;
+  rdfs:domain :LegalElement ; rdfs:range :Fact ;
+  rdfs:label "applies to fact"@en .
+
+:decidesIssue a owl:ObjectProperty ;
+  rdfs:domain :Holding ; rdfs:range :Issue ;
+  rdfs:label "decides issue"@en .
+
+:supportedBy a owl:ObjectProperty ;
+  rdfs:domain :Holding ; rdfs:range :EvidenceSpan ;
+  rdfs:label "supported by"@en .
+
+:refersToSource a owl:ObjectProperty ;
+  rdfs:domain :EvidenceSpan ; rdfs:range :LaborLegalSource ;
+  rdfs:label "refers to source"@en .
+
+:grantsRemedy a owl:ObjectProperty ;
+  rdfs:domain :Holding ; rdfs:range :Remedy ;
+  rdfs:label "grants remedy"@en .
+
+:hasTimeContext a owl:ObjectProperty ;
+  rdfs:range :TimeContext ;
+  rdfs:label "has time context"@en .
+
+:conflictsWith a owl:ObjectProperty, owl:SymmetricProperty ;
+  rdfs:domain :Holding ; rdfs:range :Holding ;
+  rdfs:label "conflicts with"@en .
+
+:distinguishesCase a owl:ObjectProperty ;
+  rdfs:domain :LaborCase ; rdfs:range :LaborCase ;
+  rdfs:label "distinguishes case"@en .
+
+:citesPrecedent a owl:ObjectProperty ;
+  rdfs:domain :LaborCase ; rdfs:range :LaborCase ;
+  rdfs:label "cites precedent"@en .
+
+### Data Properties
+:caseNumber a owl:DatatypeProperty ;
+  rdfs:domain :LaborCase ; rdfs:range xsd:string ;
+  rdfs:label "case number"@en .
+
+:courtLevel a owl:DatatypeProperty ;
+  rdfs:domain :LaborCase ; rdfs:range xsd:string ;
+  rdfs:label "court level"@en .
+
+:decisionDate a owl:DatatypeProperty ;
+  rdfs:domain :LaborCase ; rdfs:range xsd:date ;
+  rdfs:label "decision date"@en .
+
+:articleNumber a owl:DatatypeProperty ;
+  rdfs:domain :LaborLegalSource ; rdfs:range xsd:string ;
+  rdfs:label "article number"@en .
+
+:effectiveDate a owl:DatatypeProperty ;
+  rdfs:domain :TimeContext ; rdfs:range xsd:date ;
+  rdfs:label "effective date"@en .
+
+:amendedDate a owl:DatatypeProperty ;
+  rdfs:domain :TimeContext ; rdfs:range xsd:date ;
+  rdfs:label "amended date"@en .
+
+:partyRole a owl:DatatypeProperty ;
+  rdfs:domain :Party ; rdfs:range xsd:string ;
+  rdfs:label "party role"@en .
+
+:confidence a owl:DatatypeProperty ;
+  rdfs:range xsd:decimal ;
+  rdfs:label "confidence"@en .
+
+:paragraphIndex a owl:DatatypeProperty ;
+  rdfs:domain :EvidenceSpan ; rdfs:range xsd:integer ;
+  rdfs:label "paragraph index"@en .
+
+:textSpan a owl:DatatypeProperty ;
+  rdfs:domain :EvidenceSpan ; rdfs:range xsd:string ;
+  rdfs:label "text span"@en .
+
+### Controlled vocabulary instances
+:Worker a :Party ; :partyRole "worker" .
+:Employer a :Party ; :partyRole "employer" .
+:Union a :Party ; :partyRole "union" .
+
+:Issue_UnfairDismissal a :Issue .
+:Issue_OrdinaryWage a :Issue .
+:Issue_IllegalDispatch a :Issue .
+
+:Remedy_Reinstatement a :Remedy .
+:Remedy_BackPay a :Remedy .
+
+### Example individuals
+:Case_2024Da12345 a :LaborCase ;
+  :caseNumber "2024다12345" ;
+  :courtLevel "SupremeCourt" ;
+  :decisionDate "2024-05-23"^^xsd:date ;
+  :raisesIssue :Issue_UnfairDismissal ;
+  :involvesParty :Worker_A, :Employer_B ;
+  :hasTimeContext :Time_2024Q2 .
+
+:Worker_A a :Party ; :partyRole "worker" .
+:Employer_B a :Party ; :partyRole "employer" .
+
+:Element_JustCause a :LegalElement .
+:Element_DueProcess a :LegalElement .
+
+:Issue_UnfairDismissal :requiresElement :Element_JustCause, :Element_DueProcess .
+
+:Fact_DisciplinaryRecord a :Fact .
+:Element_JustCause :appliesToFact :Fact_DisciplinaryRecord .
+
+:Holding_DismissalInvalid a :Holding ;
+  :decidesIssue :Issue_UnfairDismissal ;
+  :supportedBy :Ev_001 ;
+  :grantsRemedy :Remedy_Reinstatement ;
+  :confidence "0.88"^^xsd:decimal .
+
+:LSA_Art23 a :LaborLegalSource ;
+  :articleNumber "근로기준법 제23조" .
+
+:Ev_001 a :EvidenceSpan ;
+  :refersToSource :LSA_Art23 ;
+  :paragraphIndex 17 ;
+  :textSpan "사용자는 근로자에게 정당한 이유 없이 해고하지 못한다" .
+
+:Time_2024Q2 a :TimeContext ;
+  :effectiveDate "2024-01-01"^^xsd:date .
